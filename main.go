@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	lib.ProxyBuffer.Refresh()
 	// 初始化系统配置
 	global.InitSystemConfig()
 	// 初始化系统服务
