@@ -1,6 +1,7 @@
 package global
 
 import (
+	"XDataFlowProxy/src/types"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
@@ -21,3 +22,6 @@ func InitSystemConfig() {
 
 // XDB 文件数据存储
 var XDB = xTool.CreateXDB()
+
+// ProxyMode 代理模式
+var ProxyMode types.ProxyMode

@@ -3,20 +3,18 @@ package proxy
 import (
 	"XDataFlowProxy/src/global"
 	"XDataFlowProxy/src/lib"
+	"XDataFlowProxy/src/types"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/os/gmlock"
 	"github.com/xgd16/gf-x-tool/xTool"
 )
 
-var requestLock = gmlock.New()
-
 // 代理处理层
-func proxyBefore(back *lib.ProxyCallBack) {
-	requestLock.Lock(back.RuleKey)
+func proxyBefore(back *types.ProxyCallBack) {
+
 }
 
-func proxyAfter(back *lib.ProxyCallBack) {
-	requestLock.Unlock(back.RuleKey)
+func proxyAfter(back *types.ProxyCallBack) {
+
 }
 
 // HttpProxy 代理执行
@@ -24,6 +22,7 @@ func HttpProxy(r *ghttp.Request) {
 	// 发起代理
 	proxyErr := lib.SetProxy(
 		r,
+		global.ProxyMode,
 		global.SystemConfig.Get("proxy.domain").String(),
 		proxyBefore,
 		proxyAfter,
