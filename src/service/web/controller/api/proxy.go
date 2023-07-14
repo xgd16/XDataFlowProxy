@@ -2,7 +2,7 @@ package api
 
 import (
 	"XDataFlowProxy/src/global"
-	"XDataFlowProxy/src/lib"
+	"XDataFlowProxy/src/proxyRule"
 	"XDataFlowProxy/src/types"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/xgd16/gf-x-tool/xTool"
@@ -18,10 +18,12 @@ func SetRule(r *ghttp.Request) {
 	parsedURL, err := url.Parse(routeT.String())
 	xTool.FastResp(r, err).Resp("操作失败")
 	// 存入数据
-	xTool.FastResp(r, global.XDB.Set("proxy", parsedURL.Path, types.UrlLimitRule{
-		LimitData: limitT.Strings(),
-	})).Resp()
-	lib.ProxyBuffer.Refresh()
+	limitData := new(types.UrlLimitRule)
+	data, err := r.GetJson()
+	xTool.FastResp(r, err).Resp()
+	xTool.FastResp(r, data.Scan(limitData)).Resp()
+	xTool.FastResp(r, global.XDB.Set("proxy", parsedURL.Path, limitData)).Resp()
+	proxyRule.SystemProxyRule.Refresh()
 	xTool.FastResp(r).Resp()
 }
 
@@ -34,6 +36,6 @@ func DelRule(r *ghttp.Request) {
 	xTool.FastResp(r, err).Resp("操作失败")
 	// 删除数据
 	xTool.FastResp(r, global.XDB.Del("proxy", parsedURL.Path)).Resp()
-	lib.ProxyBuffer.Refresh()
+	proxyRule.SystemProxyRule.Refresh()
 	xTool.FastResp(r).Resp()
 }

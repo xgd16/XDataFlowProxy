@@ -1,0 +1,134 @@
+Subject: [PATCH] t2
+---
+Index: src/service/web/controller/proxy/proxy.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/service/web/controller/proxy/proxy.go b/src/service/web/controller/proxy/proxy.go
+--- a/src/service/web/controller/proxy/proxy.go	(revision 11cea84c2e051cba167f372b716d76bd453c1090)
++++ b/src/service/web/controller/proxy/proxy.go	(date 1689240867859)
+@@ -3,14 +3,18 @@
+ import (
+ 	"XDataFlowProxy/src/global"
+ 	"XDataFlowProxy/src/lib"
++	"XDataFlowProxy/src/types"
+ 	"fmt"
+ 	"github.com/gogf/gf/v2/container/gmap"
+ 	"github.com/gogf/gf/v2/net/ghttp"
+-	"github.com/gogf/gf/v2/os/gmutex"
++	"github.com/gogf/gf/v2/os/gmlock"
+ 	"github.com/xgd16/gf-x-tool/xTool"
++	"sync"
++	"sync/atomic"
+ )
+ 
+ var ReqLockMap = gmap.NewStrAnyMap(true)
++var MQCoroutineLock = gmlock.New()
+ 
+ // proxyHandler 代理处理层
+ func proxyBefore(back *lib.ProxyCallBack) {
+@@ -25,25 +29,45 @@
+ 		}
+ 		// 生成一个用来限制的key
+ 		key := fmt.Sprintf("%s_%s", back.Request.URL.Path, str)
++		fmt.Println(key)
+ 		back.Key = key
+ 		back.ReqLock = ReqLockMap.GetOrSetFunc(key, func() any {
+-			mutex := gmutex.New()
+-			mutex.Lock()
+-			return mutex
+-		}).(*gmutex.Mutex)
++			return &types.ReqLockItem{
++				DelMapLock: new(sync.WaitGroup),
++				N:          0,
++			}
++		}).(*types.ReqLockItem)
++		back.ReqLock.DelMapLock.Wait()
++		atomic.AddInt64(&back.ReqLock.N, 1)
++		if back.ReqLock.N == 2 {
++			fmt.Println(2)
++		}
++		MQCoroutineLock.Lock(key)
+ 		fmt.Println("进入")
+ 	}
+ 	return
+ }
+ 
+ func proxyAfter(back *lib.ProxyCallBack) {
+-	back.ReqLock.Unlock()
++	MQCoroutineLock.Unlock(back.Key)
++	atomic.AddInt64(&back.ReqLock.N, -1)
++	if back.ReqLock.N <= 0 {
++		back.ReqLock.DelMapLock.Add(1)
++		ReqLockMap.Remove(back.Key)
++		MQCoroutineLock.Remove(back.Key)
++		back.ReqLock.DelMapLock.Done()
++		fmt.Println("释放------------")
++	}
++	//fmt.Println("end")
+ }
+ 
+ // HttpProxy 代理执行
+ func HttpProxy(r *ghttp.Request) {
+-	// 发起代理
++	//time.Sleep(time.Second * 1)
++	//xTool.FastResp(r).Resp(fmt.Sprintf("%p\n", r))
++
++	//发起代理
+ 	proxyErr := lib.SetProxy(r, global.SystemConfig.Get("proxy.domain").String(), proxyBefore, proxyAfter)
+-	// 判断出错进行错误返回
++	//判断出错进行错误返回
+ 	xTool.FastResp(r, proxyErr, false).Resp("服务无响应...")
+ }
+Index: src/lib/proxy.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/lib/proxy.go b/src/lib/proxy.go
+--- a/src/lib/proxy.go	(revision 11cea84c2e051cba167f372b716d76bd453c1090)
++++ b/src/lib/proxy.go	(date 1688204042842)
+@@ -1,8 +1,8 @@
+ package lib
+ 
+ import (
++	"XDataFlowProxy/src/types"
+ 	"github.com/gogf/gf/v2/net/ghttp"
+-	"github.com/gogf/gf/v2/os/gmutex"
+ 	"net/http/httputil"
+ 	"net/url"
+ )
+@@ -11,7 +11,7 @@
+ 	Proxy   *httputil.ReverseProxy
+ 	Request *ghttp.Request
+ 	Key     string
+-	ReqLock *gmutex.Mutex
++	ReqLock *types.ReqLockItem
+ }
+ 
+ // SetProxy 设置代理
+Index: src/types/proxy.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/types/proxy.go b/src/types/proxy.go
+--- a/src/types/proxy.go	(revision 11cea84c2e051cba167f372b716d76bd453c1090)
++++ b/src/types/proxy.go	(date 1688204901207)
+@@ -1,6 +1,15 @@
+ package types
+ 
++import (
++	"sync"
++)
++
+ // UrlLimitRule url 限制规则
+ type UrlLimitRule struct {
+ 	LimitData []string `json:"limitData"`
+ }
++
++type ReqLockItem struct {
++	DelMapLock *sync.WaitGroup
++	N          int64
++}
