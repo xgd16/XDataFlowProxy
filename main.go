@@ -9,6 +9,7 @@ import (
 	"XDataFlowProxy/src/types"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
+	"github.com/xgd16/gf-x-tool/xTool"
 )
 
 func main() {
@@ -25,6 +26,12 @@ func main() {
 }
 
 func baseInit() {
+	// 创建 普罗米修斯数值
+	xTool.InitPrometheusMetric(
+		global.SystemConfig.Get("prometheus.namespace").String(),
+		global.SystemConfig.Get("prometheus.subsystem").String(),
+	)
+	// 设置代理模式
 	global.ProxyMode = func() types.ProxyMode {
 		switch global.SystemConfig.Get("proxy.mode", 1).Int() {
 		case 2:

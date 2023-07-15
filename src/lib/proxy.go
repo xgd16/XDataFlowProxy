@@ -35,7 +35,8 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 		cbBefore(proxyData)
 	}
 	// 转发代理后的请求
-	proxy.ServeHTTP(r.Response.ResponseWriter, r.Response.Request.Request)
+	proxy.ServeHTTP(r.Response.Writer.RawWriter(), r.Request)
+	// 后置处理
 	if ok {
 		cbAfter(proxyData)
 		proxyMode.ProxyAfter(proxyData)
@@ -46,11 +47,13 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 func handlerBeforeData(data *types.ProxyCallBack) (ok bool) {
 	// 获取基础配置规则
 	rule, ok := proxyRule.SystemProxyRule.GetFormPath(data.Path)
-	data.RuleKey = getRequestRuleKey(
-		data.Request,
-		garray.NewStrArrayFrom(rule.LimitData.ReqData).Sort(false).Slice(),
-		garray.NewStrArrayFrom(rule.LimitData.Header).Sort(false).Slice(),
-	)
+	if ok {
+		data.RuleKey = getRequestRuleKey(
+			data.Request,
+			garray.NewStrArrayFrom(rule.LimitData.ReqData).Sort(false).Slice(),
+			garray.NewStrArrayFrom(rule.LimitData.Header).Sort(false).Slice(),
+		)
+	}
 	return
 }
 
