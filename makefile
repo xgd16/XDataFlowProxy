@@ -1,7 +1,7 @@
 .PHONY: all run clean help
 
 APP = XDataFlowProxy
-RACE = -gcflags='-l -l -l' -ldflags='-s -w' -pgo=auto
+RACE = -ldflags='-s -w' -pgo=auto
 GLOBAL_CONFIG = CGO_ENABLED=0
 
 ## linux: 编译打包linux
