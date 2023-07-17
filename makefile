@@ -1,32 +1,42 @@
 .PHONY: all run clean help
 
+GOROOT =$(shell go env GOROOT)
 APP = XDataFlowProxy
-RACE = -ldflags='-s -w' -pgo=auto
+RACE = -ldflags="-s -w" -pgo=auto -o
 GLOBAL_CONFIG = CGO_ENABLED=0
+
+ifeq ($(OS),Windows_NT)
+    IS_WINDOWS := 1
+
+endif
+
+BUILD_CMD = $(if $(IS_WINDOWS), \
+    	SET ${GLOBAL_CONFIG}&SET GOOS=$(1)&SET GOARCH=$(2)&"$(GOROOT)\bin\go" build $(RACE) .\bin\$(1)_$(2)\$(APP)$(3) .\main.go, \
+    	${GLOBAL_CONFIG} GOOS=$(1) GOARCH=$(2) $(GOROOT)/bin/go build $(RACE) ./bin/$(1)_$(2)/$(APP)$(3) ./main.go)
 
 ## linux: 编译打包linux
 .PHONY: linux-amd64
 linux-amd64:
-	${GLOBAL_CONFIG} GOOS=linux GOARCH=amd64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_linux_amd64 ./main.go
+	$(call BUILD_CMD,linux,amd64)
 .PHONY: linux-arm64
 linux-arm64:
-	${GLOBAL_CONFIG} GOOS=linux GOARCH=arm64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_linux_arm64 ./main.go
+	$(call BUILD_CMD,linux,arm64)
 
 ## win: 编译打包win
 .PHONY: win-amd64
 win-amd64:
-	${GLOBAL_CONFIG} GOOS=windows GOARCH=amd64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_windows_amd64.exe ./main.go
+	$(call BUILD_CMD,windows,amd64,.exe)
 .PHONY: win-arm64
 win-arm64:
-	${GLOBAL_CONFIG} GOOS=windows GOARCH=arm64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_windows_arm64.exe ./main.go
+	$(call BUILD_CMD,windows,arm64,.exe)
 
 ## mac: 编译打包mac
 .PHONY: mac-amd64
 mac-amd64:
-	${GLOBAL_CONFIG} GOOS=darwin GOARCH=amd64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_darwin_amd64 ./main.go
+	$(call BUILD_CMD,darwin,amd64)
 .PHONY: mac-arm64
 mac-arm64:
-	${GLOBAL_CONFIG} GOOS=darwin GOARCH=arm64 ${GO_PATH}go build $(RACE) -o ./bin/${APP}_darwin_arm64 ./main.go
+	$(call BUILD_CMD,darwin,arm64)
 
 .PHONY: darwin-arm64-lib
 darwin-arm64-lib:
@@ -47,14 +57,17 @@ tidy:
 update:
 	@go get -u
 
+# make docker-build -e VERSION=v1.0
+docker-build:
+	make linux-amd64
+	- docker rmi $(APP):$(VERSION)
+	docker build -t $(APP):$(VERSION) .
+	docker tag $(APP):$(VERSION) harbor.mirlowz8.com/dy/$(APP):$(VERSION)
+	docker push harbor.mirlowz8.com/dy/$(APP):$(VERSION)
+
 ## 清理二进制文件
 clean:
-	@if [ -f ./bin/${APP}_darwin_amd64 ] ; then rm ./bin/${APP}_darwin_amd64; fi
-	@if [ -f ./bin/${APP}_windows_amd64.exe ] ; then rm ./bin/${APP}_windows_amd64.exe; fi
-	@if [ -f ./bin/${APP}_linux_amd64 ] ; then rm ./bin/${APP}_linux_amd64; fi
-	@if [ -f ./bin/${APP}_darwin_arm64 ] ; then rm ./bin/${APP}_darwin_arm64; fi
-	@if [ -f ./bin/${APP}_windows_arm64.exe ] ; then rm ./bin/${APP}_windows_arm64.exe; fi
-	@if [ -f ./bin/${APP}_linux_arm64 ] ; then rm ./bin/${APP}_linux_arm64; fi
+	rm -f ./bin/*
 
 help:
 	@echo "make - 格式化 Go 代码, 并编译生成二进制文件"
@@ -66,6 +79,7 @@ help:
 	@echo "make win-arm64 - 编译 Go 代码, 生成windows-arm64二进制文件"
 	@echo "make tidy - 执行go mod tidy"
 	@echo "make run - 直接运行 Go 代码"
+	@echo "make docker-build 编译成 docker images 使用方式 make docker-build -e VERSION=v1.0"
 	@echo "make clean - 移除编译的二进制文件"
 	@echo "make all - 编译多平台的二进制文件"
 	@echo "make update - 更新 mod 扩展库"
