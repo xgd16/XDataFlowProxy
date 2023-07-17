@@ -9,12 +9,18 @@ import (
 	"net/url"
 )
 
+func verifyKey(r *ghttp.Request) {
+	xTool.FastResp(r, r.Get("key").String() != global.SystemConfig.Get("server.key").String(), false).Resp("无效请求")
+}
+
 // RuleList 规则列表
 func RuleList(r *ghttp.Request) {
+	verifyKey(r)
 	xTool.FastResp(r).SetData(proxyRule.SystemProxyRule.Get()).Resp()
 }
 
 func SetRule(r *ghttp.Request) {
+	verifyKey(r)
 	routeT := r.Get("route")     // 路径
 	limitT := r.Get("limitData") // 限制参数
 	// 判断输入参数是否为空
@@ -34,6 +40,7 @@ func SetRule(r *ghttp.Request) {
 }
 
 func DelRule(r *ghttp.Request) {
+	verifyKey(r)
 	routeT := r.Get("route")
 	// 判断输入参数是否为空
 	xTool.FastResp(r, routeT.IsEmpty(), false).Resp("参数错误")
