@@ -39,7 +39,7 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 	}
 	// 处理前置数据
 	rule, ok := handlerBeforeData(proxyData)
-	if rule.Mode > 0 {
+	if ok && rule.Mode > 0 {
 		proxyMode = ProxyMode(rule.Mode)
 	}
 	// 前置处理

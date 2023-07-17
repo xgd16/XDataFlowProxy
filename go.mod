@@ -3,9 +3,9 @@ module XDataFlowProxy
 go 1.18
 
 require (
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.4.4
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.4.4
-	github.com/gogf/gf/v2 v2.4.4
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.0
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.0
+	github.com/gogf/gf/v2 v2.5.0
 	github.com/xgd16/gf-x-tool v0.1.18
 )
 
