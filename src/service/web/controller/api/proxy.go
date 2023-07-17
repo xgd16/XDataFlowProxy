@@ -22,7 +22,7 @@ func SetRule(r *ghttp.Request) {
 	data, err := r.GetJson()
 	xTool.FastResp(r, err).Resp()
 	xTool.FastResp(r, data.Scan(limitData)).Resp()
-	xTool.FastResp(r, !xTool.InArr(limitData.Mode, []int{1, 2}), false).Response("参数错误")
+	xTool.FastResp(r, !xTool.InArr(limitData.Mode, []int{0, 1, 2}), false).Response("参数错误")
 	xTool.FastResp(r, global.XDB.Set("proxy", parsedURL.Path, limitData)).Resp()
 	proxyRule.SystemProxyRule.Refresh()
 	xTool.FastResp(r).Resp()
