@@ -3,10 +3,8 @@ package main
 import (
 	"XDataFlowProxy/src/global"
 	"XDataFlowProxy/src/lib"
-	"XDataFlowProxy/src/proxyMode"
 	"XDataFlowProxy/src/proxyRule"
 	"XDataFlowProxy/src/service"
-	"XDataFlowProxy/src/types"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/xgd16/gf-x-tool/xTool"
@@ -32,12 +30,5 @@ func baseInit() {
 		global.SystemConfig.Get("prometheus.subsystem").String(),
 	)
 	// 设置代理模式
-	global.ProxyMode = func() types.ProxyMode {
-		switch global.SystemConfig.Get("proxy.mode", 1).Int() {
-		case 2:
-			return new(proxyMode.RepeatedRejection)
-		default:
-			return new(proxyMode.SequentialAccess)
-		}
-	}()
+	global.ProxyMode = lib.ProxyMode(global.SystemConfig.Get("proxy.mode", 1).Int())
 }

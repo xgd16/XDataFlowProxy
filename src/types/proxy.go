@@ -7,6 +7,7 @@ import (
 
 // UrlLimitRule url 限制规则
 type UrlLimitRule struct {
+	Mode      int       `json:"mode"`
 	LimitData LimitData `json:"limitData"`
 }
 

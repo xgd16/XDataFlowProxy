@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"XDataFlowProxy/src/proxyMode"
 	"XDataFlowProxy/src/proxyRule"
 	"XDataFlowProxy/src/types"
 	"fmt"
@@ -11,6 +12,15 @@ import (
 	"net/http/httputil"
 	"net/url"
 )
+
+func ProxyMode(mode int) types.ProxyMode {
+	switch mode {
+	case 2:
+		return new(proxyMode.RepeatedRejection)
+	default:
+		return new(proxyMode.SequentialAccess)
+	}
+}
 
 // SetProxy 设置代理
 func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBefore, cbAfter func(back *types.ProxyCallBack)) error {
@@ -28,7 +38,8 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 		Path:    r.Request.URL.Path,
 	}
 	// 处理前置数据
-	ok := handlerBeforeData(proxyData)
+	rule, ok := handlerBeforeData(proxyData)
+	proxyMode = ProxyMode(rule.Mode)
 	// 前置处理
 	if ok {
 		proxyMode.ProxyBefore(proxyData)
@@ -44,9 +55,9 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 	return nil
 }
 
-func handlerBeforeData(data *types.ProxyCallBack) (ok bool) {
+func handlerBeforeData(data *types.ProxyCallBack) (rule *types.UrlLimitRule, ok bool) {
 	// 获取基础配置规则
-	rule, ok := proxyRule.SystemProxyRule.GetFormPath(data.Path)
+	rule, ok = proxyRule.SystemProxyRule.GetFormPath(data.Path)
 	if ok {
 		data.RuleKey = getRequestRuleKey(
 			data.Request,
