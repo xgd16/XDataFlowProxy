@@ -1,0 +1,89 @@
+POST http://localhost:9431/xdf-api/x-proxy/setRule
+Content-Type: application/json
+Content-Length: 122
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "route": "/index/index?id=90",
+  "mode": 1,
+  "limitData": {
+    "reqData": [
+      "id"
+    ],
+    "header": []
+  }
+}
+
+<> 2023-07-17T114435.200.json
+
+###
+
+POST http://localhost:9431/xdf-api/x-proxy/delRule
+Content-Type: application/json
+Content-Length: 29
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "route": "/index/index"
+}
+
+<> 2023-07-17T114416.200.json
+
+###
+
+POST http://localhost:9431/xdf-api/x-proxy/setRule
+Content-Type: application/json
+Content-Length: 122
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "route": "/index/index?id=90",
+  "mode": 1,
+  "limitData": {
+    "reqData": [
+      "id"
+    ],
+    "header": []
+  }
+}
+
+<> 2023-07-17T114310.200.json
+
+###
+
+GET http://localhost:9431/xdf-api/x-proxy/ruleList
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-17T114131.200.json
+
+###
+
+GET http://localhost:9431/xdf-api/x-proxy/ruleList
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-17T114130.200.json
+
+###
+
+GET http://localhost:9431/xdf-api/x-proxy/ruleList
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-17T114120.200.json
+
+###
+

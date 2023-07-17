@@ -9,6 +9,11 @@ import (
 	"net/url"
 )
 
+// RuleList 规则列表
+func RuleList(r *ghttp.Request) {
+	xTool.FastResp(r).SetData(proxyRule.SystemProxyRule.Get()).Resp()
+}
+
 func SetRule(r *ghttp.Request) {
 	routeT := r.Get("route")     // 路径
 	limitT := r.Get("limitData") // 限制参数

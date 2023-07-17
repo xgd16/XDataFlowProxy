@@ -11,4 +11,5 @@ func Api(r *ghttp.RouterGroup) {
 
 	xProxy.POST("/setRule", api.SetRule)
 	xProxy.POST("/delRule", api.DelRule)
+	xProxy.GET("/ruleList", api.RuleList)
 }

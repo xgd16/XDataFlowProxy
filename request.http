@@ -1,0 +1,29 @@
+
+### 获取规则列表
+GET http://localhost:9431/xdf-api/x-proxy/ruleList
+Accept: application/json
+
+### 设置规则
+POST http://localhost:9431/xdf-api/x-proxy/setRule
+Content-Type: application/json
+
+{
+  "route": "/index/index?id=90",
+  "mode": 1,
+  "limitData": {
+    "reqData": [
+      "id"
+    ],
+    "header": []
+  }
+}
+
+### 删除规则
+POST http://localhost:9431/xdf-api/x-proxy/delRule
+Content-Type: application/json
+
+{
+  "route": "/index/index"
+}
+
+
