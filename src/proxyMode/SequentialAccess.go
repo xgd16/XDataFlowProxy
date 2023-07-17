@@ -1,7 +1,6 @@
 package proxyMode
 
 import (
-	"XDataFlowProxy/src/global"
 	"XDataFlowProxy/src/types"
 	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/os/gmlock"
@@ -12,23 +11,16 @@ import (
 var requestLock = gmlock.New()
 var memClean = gmap.NewStrIntMap(true)
 
-func init() {
-	if global.SystemConfig.Get("proxy.mode").Int() == 1 {
-		go func() {
-			for {
-				for s, i := range memClean.Map() {
-					if int64(i) < gtime.Now().Unix() {
-						memClean.Remove(s)
-					}
-				}
-				time.Sleep(3 * time.Second)
-			}
-		}()
-	}
-}
-
 // SequentialAccess 顺序访问
 type SequentialAccess struct {
+}
+
+func (t *SequentialAccess) MemGC() {
+	for s, i := range memClean.Map() {
+		if int64(i) < gtime.Now().Unix() {
+			memClean.Remove(s)
+		}
+	}
 }
 
 func (t *SequentialAccess) ProxyBefore(back *types.ProxyCallBack) {

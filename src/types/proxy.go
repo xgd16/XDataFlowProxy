@@ -26,4 +26,5 @@ type ProxyCallBack struct {
 type ProxyMode interface {
 	ProxyBefore(back *ProxyCallBack)
 	ProxyAfter(back *ProxyCallBack)
+	MemGC()
 }

@@ -12,6 +12,10 @@ var requestData = gmap.NewStrIntMap(true)
 type RepeatedRejection struct {
 }
 
+func (t *RepeatedRejection) MemGC() {
+
+}
+
 func (t *RepeatedRejection) ProxyBefore(back *types.ProxyCallBack) {
 	if requestData.Contains(back.RuleKey) {
 		xTool.FastResp(back.Request).ErrorStatus().Resp("上个请求未完成", 999999)

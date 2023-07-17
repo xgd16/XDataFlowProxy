@@ -1,13 +1,15 @@
 package service
 
 import (
+	"XDataFlowProxy/src/service/timer"
 	"XDataFlowProxy/src/service/web"
 	"fmt"
 )
 
 // 填写注册服务
 var register = map[string]func(){
-	"WEB": web.Service,
+	"WEB":   web.Service,
+	"Timer": timer.Service,
 	//"Queue": queue.Service,
 }
 
