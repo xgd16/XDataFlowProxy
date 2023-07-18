@@ -5,8 +5,6 @@ import (
 	"XDataFlowProxy/src/lib"
 	"XDataFlowProxy/src/proxyRule"
 	"XDataFlowProxy/src/service"
-	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
-	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/xgd16/gf-x-tool/xTool"
 )
 
