@@ -22,6 +22,9 @@ func main() {
 }
 
 func baseInit() {
+	if err := xTool.FastRespJsonConfigOn(); err != nil {
+		panic("从配置初始化 FastResp 失败")
+	}
 	// 创建 普罗米修斯数值
 	xTool.InitPrometheusMetric(
 		global.SystemConfig.Get("prometheus.namespace").String(),

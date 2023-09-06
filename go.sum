@@ -134,6 +134,8 @@ github.com/xgd16/gf-x-rabbitMQ v0.0.2 h1:HzIu/ITP0x3Q7hrLcIngkShPkH65CWm92delWmq
 github.com/xgd16/gf-x-rabbitMQ v0.0.2/go.mod h1:Z15sK3+EKOC1PEhsntkryyeJFylr2Za4vYWMdFlqwOE=
 github.com/xgd16/gf-x-tool v0.1.18 h1:OuDpwPaAUN3agXRBpMUfnVy8a+HwrxfdAIbSFTlnDAQ=
 github.com/xgd16/gf-x-tool v0.1.18/go.mod h1:dzuaB34ugqCXazcL6347q3mLm53RJ6DuoyOdYTwnETw=
+github.com/xgd16/gf-x-tool v0.2.5/go.mod h1:gBaMzKzG1gmboqGeA0Vlnwh8WYxE18lojzsFLgEt++M=
+github.com/xgd16/gf-x-tool v0.2.6/go.mod h1:gBaMzKzG1gmboqGeA0Vlnwh8WYxE18lojzsFLgEt++M=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.0/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 go.opentelemetry.io/otel v1.7.0/go.mod h1:5BdUoMIz5WEs0vt0CUEMtSSaTSHBBVwrhnz7+nrD5xk=
