@@ -7,8 +7,11 @@ import (
 	"fmt"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 )
@@ -31,6 +34,9 @@ func SetProxy(r *ghttp.Request, proxyMode types.ProxyMode, toDomain string, cbBe
 	}
 	// 创建反向代理对象
 	proxy := httputil.NewSingleHostReverseProxy(parse)
+	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, err error) {
+		g.Log().Error(gctx.New(), err)
+	}
 	// 调用外部代码
 	proxyData := &types.ProxyCallBack{
 		Proxy:   proxy,

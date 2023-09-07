@@ -4,6 +4,7 @@ import (
 	"XDataFlowProxy/src/global"
 	"XDataFlowProxy/src/lib"
 	"XDataFlowProxy/src/types"
+	"fmt"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/xgd16/gf-x-tool/xTool"
 )
@@ -27,6 +28,7 @@ func HttpProxy(r *ghttp.Request) {
 		proxyBefore,
 		proxyAfter,
 	)
+	fmt.Println("代理出错", proxyErr)
 	// 判断出错进行错误返回
-	xTool.FastResp(r, proxyErr, false).Resp("服务无响应...")
+	xTool.FastResp(r, proxyErr).Resp("服务无响应...")
 }
